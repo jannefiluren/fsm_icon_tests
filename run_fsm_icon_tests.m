@@ -3,116 +3,176 @@ function run_fsm_icon_tests(year)
 
 %% Setup
 
-s.time_start = datenum(year,9,1);
-s.time_end = datenum(year+1,7,1);
-s.prec_input_folder = "";
-s.meteo_model = "ICON";
+time_start = datenum(year,9,1);
+time_end = datenum(year+1,7,1);
 
 base_folder = "D:\FSM_DEVELOPMENT_2024\FSM_ICON_TESTS_" + year + "_" + (year+1);
 
 
-%% FSM.HS using ICON precip splitted by air temperature
-
-s.root_folder = fullfile(base_folder,"FSM_ICON_SPLIT_TAIR");
-s.split_prec_by_tair = true;
-
-ansmsg = start_oshd_fsm(0,-1,s.time_start,"point","init_type","initialize",...
-  "silent",0,"root_folder",s.root_folder,"prec_input_folder",s.prec_input_folder,...
-  "time_end",s.time_end,"meteo_model",s.meteo_model,"split_prec_by_tair",s.split_prec_by_tair);
-
-assert(startsWith(ansmsg,"MSG*"),"Failed to run FSM_ICON")
-
-
-% %% FSM.HS using ICON precip splitted by snowfall
+% %% FSM.HS - NWP=COSMO + PREC=OI_INCA
 % 
-% s.root_folder = fullfile(base_folder,"FSM_ICON_SPLIT_SNOWFALL");
-% s.split_prec_by_tair = false;
+% clearvars -except time_start time_end base_folder
 % 
-% ansmsg = start_oshd_fsm(0,-1,s.time_start,"point","init_type","initialize",...
-%   "silent",0,"root_folder",s.root_folder,"prec_input_folder",s.prec_input_folder,...
-%   "time_end",s.time_end,"meteo_model",s.meteo_model,"split_prec_by_tair",s.split_prec_by_tair);
+% root_folder = fullfile(base_folder,"FSM_COSMO_OI_INCA");
+% prec_input_folder = "I:\DATA_OI\OI_INCA";
+% meteo_model = "COSMO";
 % 
-% assert(startsWith(ansmsg,"MSG*"),"Failed to run FSM_ICON")
+% ansmsg = start_oshd_fsm(0,-1,time_start,"point","init_type","initialize",...
+%   "silent",0,"root_folder",root_folder,"prec_input_folder",prec_input_folder,...
+%   "time_end",time_end,"meteo_model",meteo_model);
+% 
+% assert(startsWith(ansmsg,"MSG*"),"Failed to run FSM_COSMO_OI_INCA (FSM.HS)")
 
 
-%% FSM.HS using ICON+OI precip splitted by air temperature
-
-s.root_folder = fullfile(base_folder,"FSM_ICON_OI_SPLIT_TAIR");
-s.prec_input_folder = "W:\DATA_OI-temperature_based\OI_ICON";
-s.split_prec_by_tair = true;
-
-ansmsg = start_oshd_fsm(0,-1,s.time_start,"point","init_type","initialize",...
-  "silent",0,"root_folder",s.root_folder,"prec_input_folder",s.prec_input_folder,...
-  "time_end",s.time_end,"meteo_model",s.meteo_model,"split_prec_by_tair",s.split_prec_by_tair);
-
-assert(startsWith(ansmsg,"MSG*"),"Failed to run FSM_ICON_OI")
-
-
-%% FSM.HS using ICON+OI precip splitted by snowfall
-
-s.root_folder = fullfile(base_folder,"FSM_ICON_OI_SPLIT_SNOWFALL");
-s.prec_input_folder = "W:\DATA_OI-snowfall_based\OI_ICON";
-s.split_prec_by_tair = false;
-
-ansmsg = start_oshd_fsm(0,-1,s.time_start,"point","init_type","initialize",...
-  "silent",0,"root_folder",s.root_folder,"prec_input_folder",s.prec_input_folder,...
-  "time_end",s.time_end,"meteo_model",s.meteo_model,"split_prec_by_tair",s.split_prec_by_tair);
-
-assert(startsWith(ansmsg,"MSG*"),"Failed to run FSM_ICON_OI")
+% %% FSM.HS - NWP=ICON + PREC=OI_INCA
+% 
+% clearvars -except time_start time_end base_folder
+% 
+% root_folder = fullfile(base_folder,"FSM_ICON_OI_INCA");
+% prec_input_folder = "I:\DATA_OI\OI_INCA";
+% meteo_model = "ICON";
+% 
+% ansmsg = start_oshd_fsm(0,-1,time_start,"point","init_type","initialize",...
+%   "silent",0,"root_folder",root_folder,"prec_input_folder",prec_input_folder,...
+%   "time_end",time_end,"meteo_model",meteo_model);
+% 
+% assert(startsWith(ansmsg,"MSG*"),"Failed to run FSM_ICON_OI_INCA (FSM.HS)")
 
 
-%% FSM.PF_cluster using ICON+OI precip
+% %% FSM.HS - NWP=ICON + PREC=ICON+TAIR
+% 
+% 
+% clearvars -except time_start time_end base_folder
+% 
+% root_folder = fullfile(base_folder,"FSM_ICON_SPLIT_TAIR");
+% prec_input_folder = "";
+% split_prec_by_tair = true;
+% meteo_model = "ICON";
+% 
+% ansmsg = start_oshd_fsm(0,-1,time_start,"point","init_type","initialize",...
+%   "silent",0,"root_folder",root_folder,"prec_input_folder",prec_input_folder,...
+%   "time_end",time_end,"meteo_model",meteo_model,"split_prec_by_tair",split_prec_by_tair);
+% 
+% assert(startsWith(ansmsg,"MSG*"),"Failed to run FSM_ICON_SPLIT_TAIR")
 
-s.root_folder = fullfile(base_folder,"FSM_PF_ICON");
-s.prec_input_folder = "W:\DATA_OI-snowfall_based\OI_ICON";
-s.split_prec_by_tair = true;
 
-input_pf_rerun = fullfile(s.root_folder,"FSM_PF_CLUSTERED\PF_RUN\input_perturbation_highest_weight");
+% %% FSM.HS - NWP=ICON + PREC=ICON+SNOWFALL
+% 
+% clearvars -except time_start time_end base_folder
+% 
+% root_folder = fullfile(base_folder,"FSM_ICON_SPLIT_SNOWFALL");
+% prec_input_folder = "";
+% split_prec_by_tair = false;
+% meteo_model = "ICON";
+% 
+% ansmsg = start_oshd_fsm(0,-1,time_start,"point","init_type","initialize",...
+%   "silent",0,"root_folder",root_folder,"prec_input_folder",prec_input_folder,...
+%   "time_end",time_end,"meteo_model",meteo_model,"split_prec_by_tair",split_prec_by_tair);
+% 
+% assert(startsWith(ansmsg,"MSG*"),"Failed to run FSM_ICON_SPLIT_SNOWFALL")
 
-ansmsg = start_oshd_pf(s.time_start,s.time_end,"root_folder",s.root_folder,...
-  "init_type","initialize","prec_input_folder",s.prec_input_folder,"silent",0,...
-  "split_prec_by_tair",s.split_prec_by_tair);
 
-assert(startsWith(ansmsg,"MSG*"),"Failed to run FSM_PF_ICON (FSM.PF_cluster)")
+% %% FSM.HS - NWP=ICON + PREC=OI_ICON+TAIR
+% 
+% clearvars -except time_start time_end base_folder
+% 
+% root_folder = fullfile(base_folder,"FSM_ICON_OI_SPLIT_TAIR");
+% prec_input_folder = "W:\DATA_OI-temperature_based\OI_ICON";
+% split_prec_by_tair = true;
+% meteo_model = "ICON";
+% 
+% ansmsg = start_oshd_fsm(0,-1,time_start,"point","init_type","initialize",...
+%   "silent",0,"root_folder",root_folder,"prec_input_folder",prec_input_folder,...
+%   "time_end",time_end,"meteo_model",meteo_model,"split_prec_by_tair",split_prec_by_tair);
+% 
+% assert(startsWith(ansmsg,"MSG*"),"Failed to run FSM_ICON_OI_SPLIT_TAIR")
 
-ansmsg = start_oshd_fsm(0,-1,s.time_start,"point","time_end",s.time_end,...
-  "init_type","initialize","input_pf_rerun",input_pf_rerun,...
-  "prec_input_folder",s.prec_input_folder,"root_folder",s.root_folder,"silent",0,...
-  "split_prec_by_tair",s.split_prec_by_tair);
 
-assert(startsWith(ansmsg,"MSG*"),"Failed to run FSM_PF_ICON (FSM.HS)")
+%% FSM.HS - NWP=ICON + PREC=OI_ICON+SNOWFALL
+
+clearvars -except time_start time_end base_folder
+
+root_folder = fullfile(base_folder,"FSM_ICON_OI_SPLIT_SNOWFALL");
+prec_input_folder = "W:\DATA_OI-snowfall_based\OI_ICON";
+split_prec_by_tair = false;
+meteo_model = "ICON";
+
+ansmsg = start_oshd_fsm(0,-1,time_start,"point","init_type","initialize",...
+  "silent",0,"root_folder",root_folder,"prec_input_folder",prec_input_folder,...
+  "time_end",time_end,"meteo_model",meteo_model,"split_prec_by_tair",split_prec_by_tair);
+
+assert(startsWith(ansmsg,"MSG*"),"Failed to run FSM_ICON_OI_SPLIT_SNOWFALL")
+
+
+%% FSM.HS - NWP=ICON + PREC=OI_ICON+SNOWFALL + BIAS_CORR
+
+clearvars -except time_start time_end base_folder
+
+root_folder = fullfile(base_folder,"FSM_ICON_OI_SPLIT_SNOWFALL_BIAS_CORR");
+prec_input_folder = "W:\DATA_OI-snowfall_based\OI_ICON";
+split_prec_by_tair = false;
+meteo_model = "ICON";
+
+bias_corrections.wnsx = 0.7;
+bias_corrections.sdrx = 0.9;
+bias_corrections.sdfx = 0.9;
+
+ansmsg = start_oshd_fsm(0,-1,time_start,"point","init_type","initialize",...
+  "silent",0,"root_folder",root_folder,"prec_input_folder",prec_input_folder,...
+  "time_end",time_end,"meteo_model",meteo_model,"split_prec_by_tair",split_prec_by_tair,...
+  "bias_corrections",bias_corrections);
+
+assert(startsWith(ansmsg,"MSG*"),"Failed to run FSM_ICON_OI_SPLIT_SNOWFALL_BIAS_CORR")
+
+
+% %% FSM.PF_cluster - NWP=ICON + PREC=OI_ICON+SNOWFALL
+% 
+% clearvars -except time_start time_end base_folder
+% 
+% root_folder = fullfile(base_folder,"FSM_PF_ICON");
+% prec_input_folder = "W:\DATA_OI-snowfall_based - backup\OI_ICON";
+% split_prec_by_tair = true;
+% 
+% input_pf_rerun = fullfile(root_folder,"FSM_PF_CLUSTERED\PF_RUN\input_perturbation_highest_weight");
+% 
+% ansmsg = start_oshd_pf(time_start,time_end,"root_folder",root_folder,...
+%   "init_type","initialize","prec_input_folder",prec_input_folder,"silent",0,...
+%   "split_prec_by_tair",split_prec_by_tair);
+% 
+% assert(startsWith(ansmsg,"MSG*"),"Failed to run FSM_PF_ICON (FSM.PF_cluster)")
+% 
+% ansmsg = start_oshd_fsm(0,-1,time_start,"point","time_end",time_end,...
+%   "init_type","initialize","input_pf_rerun",input_pf_rerun,...
+%   "prec_input_folder",prec_input_folder,"root_folder",root_folder,"silent",0,...
+%   "split_prec_by_tair",split_prec_by_tair);
+% 
+% assert(startsWith(ansmsg,"MSG*"),"Failed to run FSM_PF_ICON (FSM.HS)")
 
 
 % Run evaluation
 
-% experiments = [
-%   struct("path", fullfile(base_folder,"FSM_ICON_SPLIT_TAIR\FSM_HS\LATEST_00h_RUN"),...
-%   "desc", "FSM.HS (ICON+TAIR)",...
-%   "color", "b"),...
-%   struct("path", fullfile(base_folder,"FSM_ICON_SPLIT_SNOWFALL\FSM_HS\LATEST_00h_RUN"),...
-%   "desc", "FSM.HS (ICON+SNOWFALL)",...
-%   "color", "g"),...
-%   struct("path", fullfile(base_folder,"FSM_ICON_OI_SPLIT_TAIR\FSM_HS\LATEST_00h_RUN"),...
-%   "desc", "FSM.HS (ICON+OI+TAIR)",...
-%   "color", "m"),...
-%   struct("path", fullfile(base_folder,"FSM_ICON_OI_SPLIT_SNOWFALL\FSM_HS\LATEST_00h_RUN"),...
-%   "desc", "FSM.PF (ICON+OI+SNOWFALL)",...
-%   "color", "r"),...
-%   ];
-
 experiments = [
-  struct("path", fullfile(base_folder,"FSM_ICON_SPLIT_TAIR\FSM_HS\LATEST_00h_RUN"),...
-  "desc", "FSM.HS (ICON+TAIR)",...
-  "color", "b"),...
-  struct("path", fullfile(base_folder,"FSM_ICON_OI_SPLIT_TAIR\FSM_HS\LATEST_00h_RUN"),...
-  "desc", "FSM.HS (ICON+OI+TAIR)",...
-  "color", "g"),...
-  struct("path", fullfile(base_folder,"FSM_ICON_OI_SPLIT_SNOWFALL\FSM_HS\LATEST_00h_RUN"),...
-  "desc", "FSM.HS (ICON+OI+SNOWFALL)",...
-  "color", "m"),...
+  struct("path", fullfile(base_folder,"FSM_COSMO_OI_INCA\FSM_HS\LATEST_00h_RUN"),...
+  "desc", "FSM.HS (COSMO+OI_INCA)",...
+  "color", "c"),...
   struct("path", fullfile(base_folder,"FSM_PF_ICON\FSM_PF_CLUSTERED\FSM_HS\LATEST_00h_RUN"),...
-  "desc", "FSM.PF (ICON+OI+TAIR)",...
+  "desc", "FSM.PF (ICON+OI_TAIR)",...
   "color", "r"),...
+  struct("path", fullfile(base_folder,"FSM_ICON_OI_SPLIT_SNOWFALL\FSM_HS\LATEST_00h_RUN"),...
+  "desc", "FSM.HS (ICON+OI_SNOWFALL)",...
+  "color", "b"),...
+  struct("path", fullfile(base_folder,"FSM_ICON_OI_SPLIT_SNOWFALL_BIAS_CORR\FSM_HS\LATEST_00h_RUN"),...
+  "desc", "FSM.HS (ICON+OI_SNOWFALL+BIAS_CORR)",...
+  "color", "m"),...
+  %   struct("path", fullfile(base_folder,"FSM_ICON_OI_INCA\FSM_HS\LATEST_00h_RUN"),...
+  %   "desc", "FSM.HS (ICON+OI_INCA)",...
+  %   "color", "y"),...
+  %   struct("path", fullfile(base_folder,"FSM_ICON_SPLIT_TAIR\FSM_HS\LATEST_00h_RUN"),...
+  %   "desc", "FSM.HS (ICON+P_TAIR)",...
+  %   "color", "b"),...
+  %   struct("path", fullfile(base_folder,"FSM_ICON_OI_SPLIT_TAIR\FSM_HS\LATEST_00h_RUN"),...
+  %   "desc", "FSM.HS (ICON+OI_TAIR)",...
+  %   "color", "g"),...
   ];
 
 variable = "hsnt";
