@@ -1,13 +1,14 @@
+function analyze_meteo_data(year)
+
 %% Setup
 
-clear; clc
-
-time_start = datenum(2023,11,01,06,00,00);
-time_end = datenum(2024,07,01,05,00,00);
+time_start = datenum(year,11,01,06,00,00);
+time_end = datenum(year+1,07,01,05,00,00);
 
 elev_bands = 0:500:3000;
 fields = ["lwr","rhu","swr","tai","wns","snf","rnf"];
 
+fig_path = "D:\FSM_DEVELOPMENT_2024\fsm_icon_tests\figures" + "_" + year + "-" + (year+1);
 
 %% Load data
 
@@ -70,7 +71,7 @@ for field = fields
     t = tiledlayout(2,1);
     t.TileSpacing = "tight";
     
-    title(t,upper(field) + " for elevation band " + elev_bands(ibin) + " - " + elev_bands(ibin+1) + "m")
+    title(t,upper(field) + " for elevation band " + elev_bands(ibin) + " - " + elev_bands(ibin+1) + "m" + " (" + year + "-" + (year+1) + ")")
     
     ax1 = nexttile();
     plot(time,cosmo_curr,"LineWidth",2,"DisplayName","COSMO")
@@ -93,7 +94,7 @@ for field = fields
     
     filename = field + "_" + elev_bands(ibin) + "-" + elev_bands(ibin+1) + "m.png";
     
-    save_plot(fig,"D:\FSM_DEVELOPMENT_2024\fsm_icon_tests\figures",filename)
+    save_plot(fig,fig_path,filename)
     
     close all
     
@@ -103,52 +104,53 @@ end
 
 %% Analyze bias in wind speed
 
-field = "wns";
+fields = ["swr","wns"];
 
-ratios_mean = mean(data_cosmo.(field + "_mean"),1)./mean(data_icon.(field + "_mean"),1);
-
-disp(ratios_mean)
-
-for ibin = 1:length(elev_bands)-1
-  
-  time = data_icon.time(:,1);
-  icon_curr = data_icon.(field + "_mean")(:,ibin);
-  cosmo_curr = data_cosmo.(field + "_mean")(:,ibin);
-  
-  icon_curr = icon_curr * ratios_mean(ibin);
-  
-  fig = figure("Position",[100 100 1000 800]);
-  
-  t = tiledlayout(2,1);
-  t.TileSpacing = "tight";
-  
-  title(t,upper(field) + " for elevation band " + elev_bands(ibin) + " - " + elev_bands(ibin+1) + "m")
-  
-  ax1 = nexttile();
-  plot(time,cosmo_curr,"LineWidth",2,"DisplayName","COSMO")
-  hold on
-  plot(time,icon_curr,"LineWidth",2,"DisplayName","ICON")
-  datetick("x")
-  legend()
-  
-  difference = icon_curr - cosmo_curr;
-  difference_mean = round(mean(difference),1);
-  
-  ax2 = nexttile();
-  plot(time,difference,"Color","k","LineWidth",2,"DisplayName","COSMO")
-  hold on
-  plot(time,movmean(difference,30),"Color","r","LineWidth",2,"DisplayName","COSMO")
-  yline(0,"LineWidth",2,"LineStyle","--")
-  datetick("x")
-  text(0.1,0.9,{"Mean difference: " + difference_mean,...
-    "Correction factor: " + ratios_mean(ibin)},"Units","normalized")
-  ylabel("ICON minus COSMO")
-  
-  filename = field + "_" + elev_bands(ibin) + "-" + elev_bands(ibin+1) + "m - corrected.png";
-  
-  save_plot(fig,"D:\FSM_DEVELOPMENT_2024\fsm_icon_tests\figures",filename)
-  
-  close all
-  
+for field = fields
+  for ibin = 1:length(elev_bands)-1
+    
+    ratios_mean = mean(data_cosmo.(field + "_mean"),1)./mean(data_icon.(field + "_mean"),1);
+    
+    time = data_icon.time(:,1);
+    icon_curr = data_icon.(field + "_mean")(:,ibin);
+    cosmo_curr = data_cosmo.(field + "_mean")(:,ibin);
+    
+    icon_curr = icon_curr * ratios_mean(ibin);
+    
+    fig = figure("Position",[100 100 1000 800]);
+    
+    t = tiledlayout(2,1);
+    t.TileSpacing = "tight";
+    
+    title(t,upper(field) + " for elevation band " + elev_bands(ibin) + " - " + elev_bands(ibin+1) + "m" + " (" + year + "-" + (year+1) + ")")
+    
+    ax1 = nexttile();
+    plot(time,cosmo_curr,"LineWidth",2,"DisplayName","COSMO")
+    hold on
+    plot(time,icon_curr,"LineWidth",2,"DisplayName","ICON")
+    datetick("x")
+    legend()
+    
+    difference = icon_curr - cosmo_curr;
+    difference_mean = round(mean(difference),1);
+    
+    ax2 = nexttile();
+    plot(time,difference,"Color","k","LineWidth",2,"DisplayName","COSMO")
+    hold on
+    plot(time,movmean(difference,30),"Color","r","LineWidth",2,"DisplayName","COSMO")
+    yline(0,"LineWidth",2,"LineStyle","--")
+    datetick("x")
+    text(0.1,0.9,{"Mean difference: " + difference_mean,...
+      "Correction factor: " + ratios_mean(ibin)},"Units","normalized")
+    ylabel("ICON minus COSMO")
+    
+    filename = "corrected-"+field + "_" + elev_bands(ibin) + "-" + elev_bands(ibin+1) + "m.png";
+    
+    save_plot(fig,fig_path,filename)
+    
+    close all
+    
+  end
 end
 
+end
