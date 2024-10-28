@@ -1,6 +1,6 @@
 function data_oi = load_oi_data(time_start,time_end,is_domain,path)
 
-path = fullfile(path,"OUTPUT_STAT\INPUT");
+path = fullfile(path,"OUTPUT_OSHD_STAT");
 
 times = time_start:1:time_end;
 
@@ -10,7 +10,7 @@ for itime = 1:length(times)
   
   time_str = datestr(times(itime),"yyyymmddHHMM");
   
-  file = "MODELDATA_" + time_str + "_OI22.mat";
+  file = "OIDATA_" + time_str + ".mat";
   
   if isfile(fullfile(path,file))
     data_curr = load(fullfile(path,file),"time","snfx","NODATA_value");

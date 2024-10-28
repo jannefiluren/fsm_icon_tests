@@ -1,4 +1,4 @@
-function data_meteo = read_icon_data(time_start,time_end,geom,is_domain)
+function data_meteo = read_icon_data_local(time_start,time_end,geom,is_domain)
 
 times = time_start:1/24:time_end;
 

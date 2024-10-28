@@ -1,4 +1,4 @@
-function data_meteo = read_cosmo_data(time_start,time_end,geom,is_domain)
+function data_meteo = read_cosmo_data_local(time_start,time_end,geom,is_domain)
 
 times = time_start:1/24:time_end;
 
@@ -42,8 +42,8 @@ end
 function paths_meteo = get_paths_meteo(time,geom)
 
 paths_meteo = [
-  "K:\DATA_COSMO\OUTPUT_" + upper(geom) + "_OSHD\PROCESSED_ANALYSIS\COSMO_1EFA\" + datestr(time,"yyyy.mm"), ...
-  "K:\DATA_COSMO\OUTPUT_" + upper(geom) + "_OSHD\PROCESSED_ANALYSIS\COSMO_1_FA\" + datestr(time,"yyyy.mm"), ...
+  "K:\DATA_COSMO\OUTPUT_OSHD_" + upper(geom) + "\PROCESSED_ANALYSIS\COSMO_1EFA\" + datestr(time,"yyyy.mm"), ...
+  "K:\DATA_COSMO\OUTPUT_OSHD_" + upper(geom) + "\PROCESSED_ANALYSIS\COSMO_1_FA\" + datestr(time,"yyyy.mm"), ...
   ];
 
 end

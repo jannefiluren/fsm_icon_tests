@@ -17,8 +17,8 @@ load("STAT_LIST.mat")
 data_oi_icon = load_oi_data(time_start,time_end,statlist.is_domain,"W:\DATA_OI-snowfall_based\OI_ICON");
 data_oi_cosmo = load_oi_data(time_start,time_end,statlist.is_domain,"I:\DATA_OI\OI_INCA");
 
-data_icon = read_icon_data(time_start,time_end,"STAT",statlist.is_domain);
-data_cosmo = read_cosmo_data(time_start,time_end,"STAT",statlist.is_domain);
+data_icon = read_icon_data_local(time_start,time_end,"STAT",statlist.is_domain);
+data_cosmo = read_cosmo_data_local(time_start,time_end,"STAT",statlist.is_domain);
 
 assert(isequal(size(data_oi_icon.snf),size(data_icon.tai)),"Wrong size")
 assert(isequal(size(data_oi_cosmo.snf),size(data_cosmo.tai)),"Wrong size")
